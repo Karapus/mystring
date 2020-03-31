@@ -17,13 +17,11 @@ struct MyString
 
 	~MyString();
 
-	MyString& operator = (MyString	that);
+	MyString& operator = (MyString that);
 
-	MyString& operator += (const MyString&	other) ;
-	MyString& operator += (MyString&&	other);
+	MyString& operator += (const MyString& other) ;
 	
-	friend MyString	operator + (const MyString& fst, const MyString& scd);
-	friend MyString operator + (MyString&& fst,	 const MyString& scd);
+	friend MyString operator + (MyString fst, const MyString& scd);
 
 	char& operator [] (size_t i)
 	{
@@ -139,17 +137,10 @@ MyString& MyString::operator += (const MyString& other)
 	return *this;
 }
 
-MyString operator + (const MyString& fst, const MyString& scd)
-{
-	MyString res(fst);
-	res += scd;
-	return res;
-}
-
-MyString operator + (MyString&& fst, const MyString& scd)
+MyString operator + (MyString fst, const MyString& scd)
 {
 	fst += scd;
-	return (MyString&&)fst;
+	return fst;
 }
 
 size_t MyString::reserve(size_t capacity)
