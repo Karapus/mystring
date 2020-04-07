@@ -1,93 +1,4 @@
-#include <string>
-#include <string.h>
-#include <iostream>
-
-struct MyString
-{
-	private:
-	std::string name_;
-	size_t capacity_ = 0;
-	size_t size_ = 0;
-	char *data_ = nullptr;
-
-	public:
-	MyString(const char *str, 	std::string name = "noname");
-	MyString(const MyString& that, 	std::string name = "noname");
-	MyString(MyString&& that, 	std::string name = "noname");
-
-	~MyString();
-
-	MyString& operator = (MyString that);
-
-	MyString& operator += (const MyString& other) ;
-	
-	friend MyString operator + (MyString fst, const MyString& scd);
-
-	char& operator [] (size_t i)
-	{
-		return data_[i];
-	};
-
-	friend int compare (const MyString& fst, const MyString& scd)
-	{
-		return strncmp(fst.data_, scd.data_, fst.size_ < scd.size_ ? fst.size_ : scd.size_);
-	};
-#define CMP_OP(op)								\
-	friend bool operator op (const MyString& fst, const MyString& scd)	\
-	{									\
-		return compare(fst, scd) op 0;					\
-	};
-	CMP_OP(<)
-	CMP_OP(>)
-	CMP_OP(==)
-	CMP_OP(<=)
-	CMP_OP(>=)
-#undef CMP_OP
-
-	friend std::ostream& operator << (std::ostream& os, const MyString& str);
-	friend std::istream& operator >> (std::istream& is, MyString& str);
-
-	std::string name()
-	{
-		return name_;
-	};
-	size_t size()
-	{
-		return size_;
-	};
-	size_t capacity()
-	{
-		return capacity_;
-	};
-	const char* data()
-	{
-		return data_;
-	};
-	friend void swap(MyString& a, MyString& b);
-	size_t reserve(size_t capacity);
-	bool empty()
-	{
-		return size_ == 0;
-	};
-	char *c_str();
-	void clear()
-	{
-		size_ = 0;
-	};
-	void push_back(char c)
-	{
-		if (size_ == capacity_)
-			reserve(2 * capacity_ + 1);
-		data_[size_++] = c;
-	};
-	char pop_back()
-	{
-		if (size_)
-			return data_[--size_];
-		return '\0';
-	};
-	void shrink_to_fit();
-};
+#include "mystring.h"
 
 MyString::MyString(const char *str, std::string name) :
 	name_(name),
@@ -147,6 +58,16 @@ MyString operator + (MyString fst, const MyString& scd)
 	return fst;
 }
 
+char& MyString::operator [] (size_t i)
+{
+	return data_[i];
+}
+
+int compare(const MyString& fst, const MyString& scd)
+{
+	return strncmp(fst.data_, scd.data_, fst.size_ < scd.size_ ? fst.size_ : scd.size_);
+}
+
 size_t MyString::reserve(size_t capacity)
 {
 	if (capacity_ < capacity)
@@ -200,8 +121,52 @@ void swap(MyString& a, MyString& b)
 	std::swap(a.size_, b.size_);
 	std::swap(a.capacity_, b.capacity_);
 	std::swap(a.data_, b.data_);
-	/*char tmp[sizeof(MyString)] = {};
+	/*char tmp[sizeof(MyString)] = {}
 	memcpy(&tmp,	&a,	sizeof(MyString));
 	memcpy(&a,	&b,	sizeof(MyString));
 	memcpy(&b,	&tmp,	sizeof(MyString));*/
+}
+
+std::string MyString::name()
+{
+	return name_;
+}
+
+size_t  MyString::size()
+{
+	return size_;
+}
+
+size_t  MyString::capacity()
+{
+	return capacity_;
+}
+
+const char*  MyString::data()
+{
+	return data_;
+}
+
+bool  MyString::empty()
+{
+	return size_ == 0;
+}
+
+void  MyString::clear()
+{
+	size_ = 0;
+}
+
+void  MyString::push_back(char c)
+{
+	if (size_ == capacity_)
+		reserve(2 * capacity_ + 1);
+	data_[size_++] = c;
+}
+
+char  MyString::pop_back()
+{
+	if (size_)
+		return data_[--size_];
+	return '\0';
 }
