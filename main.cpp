@@ -8,6 +8,7 @@ int main()
 	MyString str3((str1 + str2 + str2 + str1), "str3");
 
 	str1 = str2 + str1;
+	std::cin >> str1;
 
 	std::cout << str1.name() << " = " << '"' << str1 << '"' << '\n';
 	std::cout << str2.name() << " = " << '"' << str2 << '"' << '\n';

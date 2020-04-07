@@ -76,11 +76,15 @@ struct MyString
 	};
 	void push_back(char c)
 	{
-		data_[++size_] = c;	
+		if (size_ == capacity_)
+			reserve(2 * capacity_ + 1);
+		data_[size_++] = c;
 	};
 	char pop_back()
 	{
-		return data_[size_--];
+		if (size_)
+			return data_[--size_];
+		return '\0';
 	};
 	void shrink_to_fit();
 };
@@ -162,7 +166,7 @@ void MyString::shrink_to_fit()
 	{
 		char *new_data = new char[size_];
 		memcpy(new_data, data_, size_);
-		delete data_;
+		delete[] data_;
 		data_ = new_data;
 	}
 }
@@ -184,12 +188,9 @@ std::ostream& operator << (std::ostream& os, const MyString& str)
 std::istream& operator >> (std::istream& is, MyString& str)
 {
 	int c = '\n';
+	str.clear();
 	while ((c = is.get()) != '\n' && (c != EOF))
-	{
-		if (str.size_ == str.capacity_)
-			str.reserve(2 * str.capacity_);
 		str.push_back(c);
-	}
 	str.shrink_to_fit();
 	return is;
 }
