@@ -101,8 +101,10 @@ char *MyString::c_str()
 
 std::ostream& operator << (std::ostream& os, const MyString& str)
 {
+	os << str.name_ << " = \"";
 	for (size_t i = 0; i < str.size_; i++)
 		os << str.data_[i];
+	os << "\"" << std::endl;
 	return os;
 }
 
