@@ -45,7 +45,7 @@ struct MyString
 #undef CMP_OP
 
 	friend std::ostream& operator << (std::ostream& os, const MyString& str);
-	friend std::istream& operator >> (std::istream& is, const MyString& str);
+	friend std::istream& operator >> (std::istream& is, MyString& str);
 
 	std::string name()
 	{
@@ -156,6 +156,24 @@ size_t MyString::reserve(size_t capacity)
 	return capacity_;
 }
 
+void MyString::shrink_to_fit()
+{
+	if (size_ != capacity_)
+	{
+		char *new_data = new char[size_];
+		memcpy(new_data, data_, size_);
+		delete data_;
+		data_ = new_data;
+	}
+}
+
+char *MyString::c_str()
+{
+	char *res = new char[size_ + 1];
+	res[size_] = '\0';
+	return res;
+}
+
 std::ostream& operator << (std::ostream& os, const MyString& str)
 {
 	for (size_t i = 0; i < str.size_; i++)
@@ -163,8 +181,17 @@ std::ostream& operator << (std::ostream& os, const MyString& str)
 	return os;
 }
 
-std::istream& operator >> (std::istream& is, const MyString& str)
+std::istream& operator >> (std::istream& is, MyString& str)
 {
+	int c = '\n';
+	while ((c = is.get()) != '\n' && (c != EOF))
+	{
+		if (str.size_ == str.capacity_)
+			str.reserve(2 * str.capacity_);
+		str.push_back(c);
+	}
+	str.shrink_to_fit();
+	return is;
 }
 
 void swap(MyString& a, MyString& b)
